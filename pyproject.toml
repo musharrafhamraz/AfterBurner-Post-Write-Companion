@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "afterburner"
+version = "0.1.0"
+description = "Post-write companion: security, testing, git hygiene, deployment — activated after code is written."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [
+    {name = "Afterburner Team"}
+]
+
+dependencies = [
+    # Core
+    "langgraph>=0.3.0",
+    "langchain-core>=0.3.0",
+    "langchain-google-genai>=2.0.0",
+    "langchain-groq>=0.2.0",
+    "crewai>=0.80.0",
+
+    # Git & GitHub
+    "gitpython>=3.1.40",
+    "PyGithub>=2.0.0",
+
+    # Security
+    "bandit>=1.8.0",
+
+    # Testing
+    "pytest>=8.0.0",
+
+    # MCP
+    "mcp>=1.0.0",
+
+    # General
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "typer>=0.12.0",
+    "rich>=13.0.0",
+    "loguru>=0.7.0",
+    "httpx>=0.27.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest-asyncio>=0.23.0",
+    "pytest-mock>=3.12.0",
+    "ruff>=0.4.0",
+]
+playwright = [
+    "playwright>=1.45.0",
+]
+semgrep = [
+    "semgrep",
+]
+
+[project.scripts]
+afterburner = "integrations.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*", "integrations*"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
