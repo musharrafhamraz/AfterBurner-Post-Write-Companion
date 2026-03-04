@@ -33,3 +33,7 @@ htmlcov/
 # Logs
 *.log
 logs/
+
+
+node_modules
+extension/node_modules
