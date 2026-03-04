@@ -149,6 +149,7 @@ def run_afterburner(
     trigger_source: str = "cli",
     changed_files: list | None = None,
     skip_deploy: bool = False,
+    on_node_complete=None,
 ) -> dict:
     """
     Convenience function to run the full Afterburner pipeline.
@@ -158,6 +159,9 @@ def run_afterburner(
         trigger_source: How the run was triggered: 'cli', 'mcp', or 'hook'.
         changed_files: Optional list of changed files (auto-detected if None).
         skip_deploy: Whether to skip deployment.
+        on_node_complete: Optional callback(node_name, node_output, full_state)
+            invoked after each graph node completes. Used by the API server
+            to stream real-time progress to the VSCode extension.
 
     Returns:
         Final AfterburnerState dict with all results.
@@ -196,7 +200,21 @@ def run_afterburner(
     }
 
     logger.info("🔥 Afterburner starting: repo={}, trigger={}", repo_path, trigger_source)
-    result = workflow.invoke(initial_state)
+
+    if on_node_complete:
+        # Stream mode: iterate node-by-node and fire callback after each
+        result = initial_state
+        for output in workflow.stream(initial_state):
+            for node_name, node_output in output.items():
+                result.update(node_output)
+                try:
+                    on_node_complete(node_name, node_output, result)
+                except Exception as e:
+                    logger.warning("on_node_complete callback error: {}", str(e))
+    else:
+        # Standard mode: invoke the full pipeline at once
+        result = workflow.invoke(initial_state)
+
     logger.info("🏁 Afterburner complete: stage={}", result.get("current_stage"))
 
     return result
