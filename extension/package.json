@@ -1,0 +1,147 @@
+{
+  "name": "afterburner",
+  "displayName": "AfterBurner — Post-Write Companion",
+  "description": "Security review, testing, git hygiene & deployment — activated after your code is written.",
+  "version": "0.1.0",
+  "publisher": "afterburner-team",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "icon": "media/icon.png",
+  "activationEvents": [
+    "workspaceContains:pyproject.toml"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "afterburner",
+          "title": "AfterBurner",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "afterburner": [
+        {
+          "id": "afterburner.pipeline",
+          "name": "Pipeline Status",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "afterburner.run",
+        "title": "Run Full Pipeline",
+        "icon": "$(play)"
+      },
+      {
+        "command": "afterburner.security",
+        "title": "Security Scan",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "afterburner.test",
+        "title": "Run Tests",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "afterburner.commit",
+        "title": "Git Commit + PR",
+        "icon": "$(git-commit)"
+      },
+      {
+        "command": "afterburner.deploy",
+        "title": "Deploy",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "afterburner.stop",
+        "title": "Stop Process",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "afterburner.showStatus",
+        "title": "Settings",
+        "icon": "$(gear)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "afterburner.run",
+          "when": "view == afterburner.pipeline",
+          "group": "navigation@1"
+        },
+        {
+          "command": "afterburner.security",
+          "when": "view == afterburner.pipeline",
+          "group": "navigation@2"
+        },
+        {
+          "command": "afterburner.test",
+          "when": "view == afterburner.pipeline",
+          "group": "navigation@3"
+        },
+        {
+          "command": "afterburner.commit",
+          "when": "view == afterburner.pipeline",
+          "group": "navigation@4"
+        },
+        {
+          "command": "afterburner.deploy",
+          "when": "view == afterburner.pipeline",
+          "group": "navigation@5"
+        },
+        {
+          "command": "afterburner.stop",
+          "when": "view == afterburner.pipeline",
+          "group": "navigation@6"
+        },
+        {
+          "command": "afterburner.showStatus",
+          "when": "view == afterburner.pipeline",
+          "group": "navigation@7"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "AfterBurner",
+      "properties": {
+        "afterburner.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Path to the Python interpreter to use for the backend."
+        },
+        "afterburner.backendPort": {
+          "type": "number",
+          "default": 7777,
+          "description": "Port for the AfterBurner backend WebSocket server."
+        },
+        "afterburner.skipDeploy": {
+          "type": "boolean",
+          "default": true,
+          "description": "Skip deployment step by default."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@types/ws": "^8.5.10",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}
